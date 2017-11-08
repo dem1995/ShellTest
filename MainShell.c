@@ -61,24 +61,27 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
+	FILE* o = stdout;
+	FILE* i = stdin;
 	/* keep reading input until "quit" command or eof of redirected input */
+	while (!feof(o)) {
 
-	while (!feof(stdin)) {
-		/* get command line from input */
-		//char
+		
+
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
 
-		if (fgets(buf, MAX_BUFFER, stdin)) { // read a line
+
+		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
+		{ 
 
 			/* tokenize the input into args array */
 			arg = args;
 			*arg++ = strtok(buf, SEPARATORS); // tokenize input
 			while ((*arg++ = strtok(NULL, SEPARATORS)));
-			// last entry will be NULL
+			// last entry will be NULL		
 			if (args[0])
 			{
 				// if there's anything there
-
 
 				/*HANDLING I/O*/
 				char inputString[MAX_BUFFER] = "";
