@@ -119,10 +119,14 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 		if (args[1] != 0)
 		{
 			// if the directory parameter is non-empty
-			strcpy(dircmdmodifier, "ls -al ");
+			//strcpy(dircmdmodifier, "ls -al ");
 			strcpy(dir, args[1]);
-			char* cmd = strcat(dircmdmodifier, dir);
-			bashLaunch(cmd);
+			//char* cmd = strcat(dircmdmodifier, dir);
+
+			char* argv[] = { "ls", "-al", dir, 0 };
+
+			forkAndLaunch(argv, inputFP, outputFP);
+			//bashLaunch(cmd);
 		}
 		else
 		{
