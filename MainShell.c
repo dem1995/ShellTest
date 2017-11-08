@@ -51,6 +51,7 @@ bool customCommandCheck(char* arg0, char** args);
 #define SEPARATORS " \t\n" // token sparators
 #define KBLU  "\x1B[34m"
 #define KRED  "\x1B[31m"
+#define RESET "\x1B[0m"
 
 
 extern char** environ;
@@ -65,9 +66,8 @@ int main(int argc, char ** argv) {
 
 		/* get command line from input */
 		//char
-		fprintf(stdout, "%s%s", getenv("PWD"), "\n");
-		fputs(getenv("PWD"), stdout);
-		fputs(prompt, stdout); // write prompt
+		fprintf(stdout, KBLU"%s"RESET"%s\n", getenv("PWD"), prompt); //write prompt
+
 		if (fgets(buf, MAX_BUFFER, stdin)) { // read a line
 
 			/* tokenize the input into args array */
@@ -152,7 +152,7 @@ bool customCommandCheck(char* arg0, char** args)
 	{
 		char** env = environ;
 		while (*env)
-			printf("%s\n", *env++); // step through environment
+			fprintf(stdout, "%s\n", *env++); // step through environment
 	}
 	else if (!strcmp(args[0], "cd"))	//"change directory" command
 	{
@@ -169,7 +169,7 @@ bool customCommandCheck(char* arg0, char** args)
 				free(buf);
 			}
 			else {
-				printf("There was a problem with changing directories.\n");
+				fprintf(stdout, "There was a problem with changing directories.\n");
 			}
 		}
 	}
