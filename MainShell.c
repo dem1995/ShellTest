@@ -134,9 +134,12 @@ bool customCommandCheck(char* arg0, char** args, char* inputFS, char* outputFS)
 	/*ENVIRON COMMAND*/
 	else if (!strcmp(args[0], "environ"))
 	{
+		FILE* output = fopen(outputFS, "w");
+
 		char** env = environ;
-		//while (*env)
-			//fprintf(outputFP, "%s\n", *env++); // step through environment
+		while (*env)
+			fprintf(output, "%s\n", *env++); // step through environment
+		close(output);
 	}
 
 	/*CHANGE DIRECTORY COMMAND*/
@@ -156,6 +159,7 @@ bool customCommandCheck(char* arg0, char** args, char* inputFS, char* outputFS)
 			}
 			else {
 				fprintf(stdout, "There was a problem with changing directories.\n");
+
 			}
 		}
 	}
