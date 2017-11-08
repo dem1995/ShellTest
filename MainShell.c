@@ -65,8 +65,8 @@ int main(int argc, char ** argv) {
 	FILE* i = stdin;
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(o)) {
-
-		
+		stdout = o;
+		stdin = i;
 
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
 
