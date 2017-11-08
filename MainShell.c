@@ -28,10 +28,12 @@ C
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "HelperMethods.c"
 
 #include <unistd.h>
 #include <sys/wait.h>
 
+void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
 
 #define MAX_BUFFER 1024 // max line buffer
@@ -44,7 +46,6 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-
 	/* keep reading input until "quit" command or eof of redirected input */
 
 	while (!feof(stdin)) {
@@ -61,6 +62,13 @@ int main(int argc, char ** argv) {
 			if (args[0])
 			{
 				// if there's anything there
+
+				//Set up input/output stuff
+				char inputString[MAX_BUFFER] = "";
+				char outputString[MAX_BUFFER] = "";
+				determineRedirection(args, inputString, outputString);
+				setUpIO(inputString, outputString);
+
 				/* check for internal/external command */
 				if (!strcmp(args[0], "clr")) //"clear" command
 				{
@@ -118,6 +126,24 @@ int main(int argc, char ** argv) {
 		}
 	}
 	return 0;
+}
+
+
+void setUpIO(char* inputString, char* outputString)
+{
+	if (strcmp(inputString, "")!=0)	//if there's an input string
+	{ 
+		int fd = open(inputString, O_RDONLY);
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+	}
+
+	if (strcmp(outputString, "")!=0) //if there's an output string
+	{
+		int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
 }
 
 void bashLaunch(char* command)
