@@ -46,7 +46,7 @@ C
 #define RESET "\x1B[0m"		//Reset text color
 
 void bashLaunch(char* command);
-bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP);
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS);
 
 extern char** environ;
 int main(int argc, char ** argv) {
@@ -112,7 +112,7 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 
-bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS)
 {
 	/*CLEAR COMMAND*/
 	if (!strcmp(args[0], "clr")) //"clear" command
@@ -135,14 +135,14 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 
 			char* argv[] = { "ls", "-al", dir, 0 };
 
-			forkAndLaunch(argv, inputFP, outputFP);
+			forkAndLaunch(argv, inputFS, outputFS);
 			//bashLaunch(cmd);
 		}
 		else
 		{
 			// if no directory is specified, use the current directory.
 			char* argv[] = { "ls", "-al", 0 };
-			forkAndLaunch(argv, inputFP, outputFP);
+			forkAndLaunch(argv, inputFS, outputFS);
 			//bashLaunch("ls -al ./");
 		}
 		free(dir);
