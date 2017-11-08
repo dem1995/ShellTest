@@ -32,6 +32,8 @@ C
 
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
