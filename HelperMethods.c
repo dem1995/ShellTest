@@ -97,7 +97,6 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 */
 void forkAndLaunch(char** args, char* inputFS, char* outputFS, bool shouldAppend)
 {
-	fprintf(stdout, "%d\n", (int)shouldAppend);
 	int status;
 	pid_t pid;
 	switch (pid = fork())
@@ -137,7 +136,6 @@ void forkAndLaunch(char** args, char* inputFS, char* outputFS, bool shouldAppend
 
 void bashLaunch(char* command, char* inputFS, char* outputFS, bool shouldAppend)
 {
-	fprintf(stdout, "%d\n", (int)shouldAppend);
 	int status;
 	pid_t pid;
 	switch (pid = fork())
