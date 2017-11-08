@@ -186,22 +186,6 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, 
 
 
 
-void bashLaunch(char* command)
-{
-	int status;
-	pid_t pid = fork();
-	if (pid == 0)
-	{
-		execl("/bin/bash", "sh", "-c", command, (char *)0);
-	}
-	else
-	{
-		do
-		{
-			int w = waitpid(pid, &status, WUNTRACED);
-		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-	}
-}
 
 
 
