@@ -54,6 +54,8 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
+	FILE* inputFP = stdin;
+	FILE* outputFP = stdout;
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
@@ -73,8 +75,6 @@ int main(int argc, char ** argv) {
 			{
 
 				/*HANDLING I/O*/
-				FILE* inputFP = stdin;
-				FILE* outputFP = stdout;
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
@@ -82,7 +82,7 @@ int main(int argc, char ** argv) {
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
-				if (customCommandCheck(args[0], args, inputFP, outputFP))
+				if (customCommandCheck(args[0], args, stdin, stdout))
 					continue;
 				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
@@ -92,8 +92,11 @@ int main(int argc, char ** argv) {
 					bashLaunch(buf);
 			}
 		}
+		fclose(inputFP);
+		
 	}
-
+	fclose(inputFP);
+	fclose(outputFP);
 	return 0;
 }
 
