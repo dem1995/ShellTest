@@ -45,7 +45,6 @@ C
 #define KRED  "\x1B[31m"	//Red text
 #define RESET "\x1B[0m"		//Reset text color
 
-void bashLaunch(char* command);
 bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS, bool ShouldAppend);
 
 extern char** environ;
