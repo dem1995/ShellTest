@@ -65,14 +65,14 @@ int main(int argc, char ** argv) {
 
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
-			fprintf(stdout, "Buffer1: %s", buf);
+			fprintf(stdout, "Buffer1: %s\n", buf);
 
 			/*TOKENIZING THE INPUT*/
 			arg = args;
 			*arg++ = strtok(buf, SEPARATORS);
 			while ((*arg++ = strtok(NULL, SEPARATORS))); // last entry will be NULL	
 
-			fprintf(stdout, "Buffer2: %s", buf);
+			fprintf(stdout, "Buffer2: %s\n", buf);
 
 			if (args[0]) // if there's anything there
 			{
@@ -82,7 +82,11 @@ int main(int argc, char ** argv) {
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
 				setUpIO(inputString, outputString, &inputFP, &outputFP);
-				fprintf(stdout, "Buffer3: %s", buf);
+				fprintf(stdout, "Buffer3: %s\n", buf);
+				for (int i = 0; args[i] != NULL; i++)
+				{
+					fprintf(stdout, "%s ", args[i]);
+				}
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
@@ -94,7 +98,7 @@ int main(int argc, char ** argv) {
 				//else pass command on to BASH
 				else
 				{
-					fprintf(stdout,"Buffer4: %s", buf);
+					fprintf(stdout,"Buffer4: %s\n", buf);
 					bashLaunch(buf);
 				}
 			}

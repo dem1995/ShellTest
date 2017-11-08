@@ -41,7 +41,7 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 		}
 	}
 
-	//removeRedirectionElements(argStrings);
+	removeRedirectionElements(argStrings);
 }
 
 
