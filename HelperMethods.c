@@ -90,13 +90,17 @@ void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 		//if (!strcmp(inputFS, "")==0)
 		if (inputFP!=NULL)
 		{
-			stdin = inputFP;
+			dup2(fileno(inputFP), STDIN_FILENO);
+			fclose(inputFP);
+			//stdin = inputFP;
 			//freopen(inputFS, "r", stdin);
 		}
 		//if (!strcmp(outputFS, "") == 0)
 		if(outputFP!=NULL)
 		{
-			stdout = outputFP;
+			dup2(fileno(inputFP), STDOUT_FILENO);
+			fclose(outputFP);
+			//stdout = outputFP;
 			//freopen(outputFS, "w", stdout);
 		}
 		execvp(args[0], args);
