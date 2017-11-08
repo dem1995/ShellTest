@@ -79,7 +79,7 @@ int main(int argc, char ** argv) {
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
-				setUpIO(inputString, outputString, &inputFP, &outputFP);
+				//setUpIO(inputString, outputString, &inputFP, &outputFP);
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
@@ -100,13 +100,13 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 
-bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
+bool customCommandCheck(char* arg0, char** args, char* inputFS, char* outputFS)
 {
 	/*CLEAR COMMAND*/
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		forkAndLaunch(args, inputFP, outputFP);
+		forkAndLaunch(args, inputFS, outputFS);
 	}
 
 	/*DIRECTORY COMMAND*/
@@ -135,8 +135,8 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 	else if (!strcmp(args[0], "environ"))
 	{
 		char** env = environ;
-		while (*env)
-			fprintf(outputFP, "%s\n", *env++); // step through environment
+		//while (*env)
+			//fprintf(outputFP, "%s\n", *env++); // step through environment
 	}
 
 	/*CHANGE DIRECTORY COMMAND*/
