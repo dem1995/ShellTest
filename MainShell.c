@@ -99,7 +99,7 @@ int main(int argc, char ** argv) {
 				else
 				{
 					fprintf(stdout,"Buffer4: %s\n", buf);
-					bashLaunch(buf);
+					forkAndLaunch(args, inputString, outputString);
 				}
 			}
 		}		
