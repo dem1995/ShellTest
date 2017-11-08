@@ -64,7 +64,6 @@ int main(int argc, char ** argv) {
 	/* keep reading input until "quit" command or eof of redirected input */
 
 	while (!feof(stdin)) {
-
 		/* get command line from input */
 		//char
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
@@ -80,13 +79,15 @@ int main(int argc, char ** argv) {
 			{
 				// if there's anything there
 
-				/*HANDLING DIRECTORY STUFF*/
 
 				/*HANDLING I/O*/
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
-				//setUpIO(inputString, outputString);
+				setUpIO(inputString, outputString);
+
+				// if there was an input redirection (<) 
+
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal/external command
@@ -109,16 +110,18 @@ void setUpIO(char* inputString, char* outputString)
 {
 	if (strcmp(inputString, "")!=0)	//if there's an input string
 	{ 
-		int fd = open(inputString, O_RDONLY);
-		dup2(fd, STDIN_FILENO);
-		close(fd);
+		freopen(inputString, "r", stdin);
+		//int fd = open(inputString, O_RDONLY);
+		//dup2(fd, STDIN_FILENO);
+		//close(fd);
 	}
 
 	if (strcmp(outputString, "")!=0) //if there's an output string
 	{
-		int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
+		freopen(outputString, "w", stdin);
+		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
+		//dup2(fd, STDOUT_FILENO);
+		//close(fd);
 	}
 }
 
