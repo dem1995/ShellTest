@@ -72,6 +72,7 @@ int main(int argc, char ** argv) {
 			*arg++ = strtok(buf, SEPARATORS);
 			while ((*arg++ = strtok(NULL, SEPARATORS))); // last entry will be NULL	
 
+			fprintf(stdout, "Buffer2: %s", buf);
 
 			if (args[0]) // if there's anything there
 			{
@@ -81,6 +82,7 @@ int main(int argc, char ** argv) {
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
 				setUpIO(inputString, outputString, &inputFP, &outputFP);
+				fprintf(stdout, "Buffer3: %s", buf);
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
@@ -92,7 +94,7 @@ int main(int argc, char ** argv) {
 				//else pass command on to BASH
 				else
 				{
-					fprintf(stdout,"Buffer2: %s", buf);
+					fprintf(stdout,"Buffer4: %s", buf);
 					bashLaunch(buf);
 				}
 			}
