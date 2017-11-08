@@ -1,6 +1,10 @@
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 
+#ifndef pid_t
+#define pid_t int
+#endif
 
 void determineRedirection(char** argStrings, char* inputString, char* outputString)
 {
@@ -30,5 +34,33 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 		{
 			nextStringIsOutputToken = true;
 		}
+	}
+}
+
+void forkAndLaunch(char** args)
+{
+	forkAndLaunch(args, NULL, NULL);
+}
+
+void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
+{
+	int status;
+	pid_t pid;
+	switch (pid = fork())
+	{
+	case -1:
+		//syserr("fork");
+	case 0:
+		if (inputFP != NULL)
+			stdin = inputFP;
+		if (outputFP != NULL)
+			stdout = outputFP;
+		execvp(args[0], args);
+		//syserr("exec");
+	default:
+		do
+		{
+			int w = waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 }

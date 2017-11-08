@@ -35,25 +35,19 @@ C
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifndef pid_t
-#define pid_t int
-#endif
-
-
-void setUpIO(char* inputString, char* outputString);
-void bashLaunch(char* command);
-void forkAndLaunch(char** args);
-bool customCommandCheck(char* arg0, char** args);
-bool thereWasCustomOutput = false;
 
 
 #define MAX_BUFFER 1024 // max line buffer
 #define MAX_ARGS 64 // max # args
 #define SEPARATORS " \t\n" // token sparators
 #define KBLU  "\x1B[34m"	//Blue text
-#define KCYN   "\x1B[36m"	//Cyan text
+#define KCYN  "\x1B[36m"	//Cyan text
 #define KRED  "\x1B[31m"	//Red text
 #define RESET "\x1B[0m"		//Reset text color
+
+void setUpIO(char* inputString, char* outputString);
+void bashLaunch(char* command);
+bool customCommandCheck(char* arg0, char** args);
 
 
 extern char** environ;
@@ -62,46 +56,34 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	
 
-	FILE* o = stdout;
-	FILE* i = stdin;
 	/* keep reading input until "quit" command or eof of redirected input */
-	while (!feof(o)) {
-		if (thereWasCustomOutput)
-		{
-			fclose(stdout);
-			thereWasCustomOutput = false;
-		}
-		stdout = o;
-		stdin = i;
+	while (!feof(stdin)) {
 
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
-
 
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
 
-			/* tokenize the input into args array */
+			/*TOKENIZING THE INPUT*/
 			arg = args;
-			*arg++ = strtok(buf, SEPARATORS); // tokenize input
-			while ((*arg++ = strtok(NULL, SEPARATORS)));
-			// last entry will be NULL		
-			if (args[0])
+			*arg++ = strtok(buf, SEPARATORS);
+			while ((*arg++ = strtok(NULL, SEPARATORS))); // last entry will be NULL	
+
+
+			if (args[0]) // if there's anything there
 			{
-				// if there's anything there
 
 				/*HANDLING I/O*/
+				FILE* inputFP = stdin;
+				FILE* outputFP = stdout;
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
-				setUpIO(inputString, outputString);
-
-				// if there was an input redirection (<) 
-
+				setUpIO(inputString, outputString, &inputFP, &outputFP);
 
 				/*CHECKING FOR COMMANDS*/
-				// check for internal/external command
+				// check for internal commands
 				if (customCommandCheck(args[0], args))
 					continue;
 				// check for quitting
@@ -114,40 +96,19 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	fclose(stdout);
 	return 0;
 }
 
-
-void setUpIO(char* inputString, char* outputString)
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 {
-	if (strcmp(inputString, "")!=0)	//if there's an input string
-	{ 
-		//freopen(inputString, "r", stdin);
-		stdin = fopen(inputString, "r");
-		//int fd = open(inputString, O_RDONLY);
-		//dup2(fd, STDIN_FILENO);
-		//close(fd);
-	}
-
-	if (strcmp(outputString, "")!=0) //if there's an output string
-	{
-		//freopen(outputString, "w", stdout);
-		stdout = fopen(outputString, "w");
-		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
-		//dup2(fd, STDOUT_FILENO);
-		//close(fd);
-		thereWasCustomOutput = true;
-	}
-}
-
-bool customCommandCheck(char* arg0, char** args)
-{
+	/*CLEAR COMMAND*/
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		forkAndLaunch(args);
+		forkAndLaunch(args, inputFP, outputFP);
 	}
+
+	/*DIRECTORY COMMAND*/
 	else if (!strcmp(args[0], "dir"))	//"directory" command
 	{
 		char* dir = malloc(sizeof(char) * MAX_BUFFER);
@@ -168,13 +129,17 @@ bool customCommandCheck(char* arg0, char** args)
 		free(dir);
 		free(dircmdmodifier);
 	}
-	else if (!strcmp(args[0], "environ"))	//"environ" command
+
+	/*ENVIRON COMMAND*/
+	else if (!strcmp(args[0], "environ"))
 	{
 		char** env = environ;
 		while (*env)
-			fprintf(stdout, "%s\n", *env++); // step through environment
+			fprintf(outputFP, "%s\n", *env++); // step through environment
 	}
-	else if (!strcmp(args[0], "cd"))	//"change directory" command
+
+	/*CHANGE DIRECTORY COMMAND*/
+	else if (!strcmp(args[0], "cd"))	
 	{
 		if (args[1] == NULL) //if there's no second argument, just print the current directory
 		{ 
@@ -199,23 +164,26 @@ bool customCommandCheck(char* arg0, char** args)
 }
 
 
-
-void forkAndLaunch(char** args)
+void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
 {
-	int status;
-	pid_t pid;
-	switch (pid = fork())
+	if (strcmp(inputString, "") != 0)	//if there's an input string
 	{
-		case -1:
-			//syserr("fork");
-		case 0:
-			execvp(args[0], args);
-			//syserr("exec");
-		default:
-			do 
-			{
-				int w = waitpid(pid, &status, WUNTRACED);
-			}	while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		
+		freopen(inputString, "r", *inputFPPointer);
+		//freopen(inputString, "r", stdin);
+		//stdin = fopen(inputString, "r");
+		//int fd = open(inputString, O_RDONLY);
+		//dup2(fd, STDIN_FILENO);
+		//close(fd);
+	}
+
+	if (strcmp(outputString, "") != 0) //if there's an output string
+	{
+		freopen(inputString, "w", *outputFPPointer);
+		//freopen(outputString, "w", stdout);
+		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
+		//dup2(fd, STDOUT_FILENO);
+		//close(fd);
 	}
 }
 
@@ -235,3 +203,6 @@ void bashLaunch(char* command)
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 }
+
+
+
