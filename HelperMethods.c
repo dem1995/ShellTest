@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <iostream>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -85,6 +86,8 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 
 void forkAndLaunch(char** args, char* inputFS, char* outputFS, bool shouldAppend)
 {
+	std::cout << shouldAppend << std::endl;
+
 	int status;
 	pid_t pid;
 	switch (pid = fork())
@@ -107,7 +110,7 @@ void forkAndLaunch(char** args, char* inputFS, char* outputFS, bool shouldAppend
 			//fclose(outputFP);
 			//stdout = outputFP;
 			if (shouldAppend)
-				freopen(outputFS, "a+", stdout);
+				freopen(outputFS, "a", stdout);
 			else
 				freopen(outputFS, "w", stdout);
 		}
