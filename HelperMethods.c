@@ -9,6 +9,7 @@
 #endif
 
 void removeRedirectionElements(char** args);
+void removeString(char** stringArray, int location);
 
 void determineRedirection(char** argStrings, char* inputString, char* outputString)
 {
