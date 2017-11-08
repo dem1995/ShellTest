@@ -151,16 +151,20 @@ bool customCommandCheck(char* arg0, char** args)
 	else if (!strcmp(args[0], "cd"))	//"change directory" command
 	{
 		printf("Current directory: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
-		if (args[1] == NULL) { // If <directory> argument NOT present -> report the current directory
-			printf("Directory unchanged: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
+		if (args[1] == NULL) //if there's no second argument, just print the current directory
+		{ 
+			printf("Current directory (According to environ): %s", getenv("PWD"));
 		}
-		else {
-			if (!chdir(args[1])) {
-				setenv("PWD", getcwd(NULL, 0), 1);
-				printf("Successful directory change: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
+		else				//If there is a second argument
+		{
+			if (chdir(args[1])==0) 
+			{
+				char* buf = malloc(sizeof(char)*MAX_BUFFER);
+				setenv("PWD", getcwd(NULL, MAX_BUFFER), 1);
+				free(buf);
 			}
 			else {
-				printf("Unsuccessful directory change\n");
+				printf("There was a problem with changing directories.\n");
 			}
 		}
 	}
@@ -169,14 +173,6 @@ bool customCommandCheck(char* arg0, char** args)
 	return true;
 }
 
-void changeDirectoryTo(char* d) {
-	char* name = "PWD"; //string PWD
-	char cwd[256]; // holder for current directory
-	char * newCurrent = getcwd(cwd, sizeof(cwd)); //get the current dir and put it in cwd
-
-	chdir(d); // change the directory
-	setenv(name, newCurrent, 1); //set new pwd
-}
 
 
 void forkAndLaunch(char** args)
