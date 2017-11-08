@@ -71,6 +71,7 @@ int main(int argc, char ** argv) {
 		if (thereWasCustomOutput)
 		{
 			fclose(stdout);
+			thereWasCustomOutput = false;
 		}
 		stdout = o;
 		stdin = i;
@@ -113,7 +114,7 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	close(stdout);
+	fclose(stdout);
 	return 0;
 }
 
