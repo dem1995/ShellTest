@@ -44,6 +44,7 @@ void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
 void forkAndLaunch(char** args);
 bool customCommandCheck(char* arg0, char** args);
+bool thereWasCustomOutput = false;
 
 
 #define MAX_BUFFER 1024 // max line buffer
@@ -61,10 +62,16 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
+	
+
 	FILE* o = stdout;
 	FILE* i = stdin;
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(o)) {
+		if (thereWasCustomOutput)
+		{
+			fclose(stdout);
+		}
 		stdout = o;
 		stdin = i;
 
@@ -105,6 +112,8 @@ int main(int argc, char ** argv) {
 			}
 		}
 	}
+
+	close(stdout);
 	return 0;
 }
 
@@ -125,6 +134,7 @@ void setUpIO(char* inputString, char* outputString)
 		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
 		//dup2(fd, STDOUT_FILENO);
 		//close(fd);
+		thereWasCustomOutput = true;
 	}
 }
 
