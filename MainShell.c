@@ -35,8 +35,16 @@ C
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifndef pid_t
+#define pid_t int
+#endif
+
+
 void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
+void forkAndLaunch(char* args);
+bool customCommandCheck(char* arg0, char* args);
+
 
 #define MAX_BUFFER 1024 // max line buffer
 #define MAX_ARGS 64 // max # args
@@ -65,63 +73,22 @@ int main(int argc, char ** argv) {
 			{
 				// if there's anything there
 
-				//Set up input/output stuff
+				/*HANDLING DIRECTORY STUFF*/
+
+				/*HANDLING I/O*/
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
-				setUpIO(inputString, outputString);
+				//setUpIO(inputString, outputString);
 
-				/* check for internal/external command */
-				if (!strcmp(args[0], "clr")) //"clear" command
-				{
-					bashLaunch("clear");
+				/*CHECKING FOR COMMANDS*/
+				// check for internal/external command
+				if (customCommandCheck(args[0], args))
 					continue;
-				}
-
-				else if (!strcmp(args[0], "dir"))	//"directory" command
-				{
-					char* dir = malloc(sizeof(char) * MAX_BUFFER);
-					char* dircmdmodifier = malloc(sizeof(char) * MAX_BUFFER); //modifier for how dir should be displayed
-					if (args[1] != 0)
-					{
-						// if the directory parameter is non-empty
-						strcpy(dircmdmodifier, "ls -al ");
-						strcpy(dir, args[1]);
-						char* cmd = strcat(dircmdmodifier, dir);
-						bashLaunch(cmd);
-					}
-					else
-					{
-						// if no directory is specified, use the current directory.
-						bashLaunch("ls -al ./");
-					}
-					free(dir);
-					free(dircmdmodifier);
-
-					continue;
-				}
-
-				else if (!strcmp(args[0], "environ"))	//"environ" command
-				{
-					char** env = environ;
-					while (*env)
-						printf("%s\n", *env++); // step through environment
-					continue;
-				}
-
-				else if (!strcmp(args[0], "cd"))	//"change directory" command
-				{
-					if (args[1] == 0)
-						printf("%s\n", *environ);
-					else if (args[1] != 0)
-						chdir(*environ);
-				}
-
-
+				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
-					break; // break out of 'while' loop
-
-				/* else pass command on to the OS*/
+					break; // break out of 'while' look
+				//else pass command on to BASH
 				else
 					bashLaunch(buf);
 			}
@@ -145,6 +112,79 @@ void setUpIO(char* inputString, char* outputString)
 		int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
+	}
+}
+
+bool customCommmandCheck (char* s, char* args)
+{
+	if (!strcmp(args[0], "clr")) //"clear" command
+	{
+		bashLaunch("clear");
+	}
+	else if (!strcmp(args[0], "dir"))	//"directory" command
+	{
+		char* dir = malloc(sizeof(char) * MAX_BUFFER);
+		char* dircmdmodifier = malloc(sizeof(char) * MAX_BUFFER); //modifier for how dir should be displayed
+		if (args[1] != 0)
+		{
+			// if the directory parameter is non-empty
+			strcpy(dircmdmodifier, "ls -al ");
+			strcpy(dir, args[1]);
+			char* cmd = strcat(dircmdmodifier, dir);
+			bashLaunch(cmd);
+		}
+		else
+		{
+			// if no directory is specified, use the current directory.
+			bashLaunch("ls -al ./");
+		}
+		free(dir);
+		free(dircmdmodifier);
+	}
+	else if (!strcmp(args[0], "environ"))	//"environ" command
+	{
+		char** env = environ;
+		while (*env)
+			printf("%s\n", *env++); // step through environment
+	}
+	else if (!strcmp(args[0], "cd"))	//"change directory" command
+	{
+		if (args[1] == 0)
+			printf("%s\n", *environ);
+		else if (args[1] != 0)
+			chdir(*environ);
+	}
+	else
+		return false;
+	return true;
+}
+
+void changeDirectoryTo(char* d) {
+	char* name = "PWD"; //string PWD
+	char cwd[256]; // holder for current directory
+	char * newCurrent = getcwd(cwd, sizeof(cwd)); //get the current dir and put it in cwd
+
+	chdir(d); // change the directory
+	setenv(name, newCurrent, 1); //set new pwd
+}
+
+
+void forkAndLaunch(char* args)
+{
+	int status;
+	pid_t pid;
+	switch (pid = fork())
+	{
+		case -1:
+			syserr("fork");
+		case 0:
+			execvp(args[0], args);
+			syserr("exec");
+		default:
+			do 
+			{
+				int w = waitpid(pid, &status, WUNTRACED);
+			}	while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 }
 
