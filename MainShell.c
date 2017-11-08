@@ -42,7 +42,7 @@ C
 
 void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
-void forkAndLaunch(char* args);
+void forkAndLaunch(char** args);
 bool customCommandCheck(char* arg0, char** args);
 
 
@@ -115,7 +115,7 @@ void setUpIO(char* inputString, char* outputString)
 	}
 }
 
-bool customCommmandCheck (char* s, char** args)
+bool customCommmandCheck (char* arg1, char** args)
 {
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
@@ -169,7 +169,7 @@ void changeDirectoryTo(char* d) {
 }
 
 
-void forkAndLaunch(char* args)
+void forkAndLaunch(char** args)
 {
 	int status;
 	pid_t pid;
