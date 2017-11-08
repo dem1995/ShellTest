@@ -91,9 +91,7 @@ int main(int argc, char ** argv) {
 				else
 					bashLaunch(buf);
 			}
-		}
-		fclose(inputFP);
-		
+		}		
 	}
 	fclose(inputFP);
 	fclose(outputFP);
