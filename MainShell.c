@@ -90,7 +90,10 @@ int main(int argc, char ** argv) {
 					break; // break out of 'while' look
 				//else pass command on to BASH
 				else
+				{
+					fprintf(stdout,"Buffer: %s", buf);
 					bashLaunch(buf);
+				}
 			}
 		}		
 	}
