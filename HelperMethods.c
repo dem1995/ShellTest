@@ -39,8 +39,20 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 	}
 }
 
+//Clears *inputFPPointer and *outputFPPointer if they're not NULL
 void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
 {
+	if (*inputFPPointer != NULL)
+	{
+		fclose(*inputFPPointer);
+		*inputFPPointer = NULL;
+	}
+	if (*outputFPPointer != NULL)
+	{
+		fclose(*outputFPPointer);
+		*outputFPPointer = NULL;
+	}
+
 	if (strcmp(inputString, "") != 0)	//if there's an input string
 	{
 		*inputFPPointer = fopen(inputString, "r");
@@ -50,9 +62,6 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 		//dup2(fd, STDIN_FILENO);
 		//close(fd);
 	}
-	else
-		*inputFPPointer = stdin;
-
 	if (strcmp(outputString, "") != 0) //if there's an output string
 	{
 		*outputFPPointer = fopen(outputString, "w");
@@ -61,11 +70,9 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 		//dup2(fd, STDOUT_FILENO);
 		//close(fd);
 	}
-	else
-		*outputFPPointer = stdout;
 }
 
-void forkAndLaunch(char** args, char* inputFS, char* outputFS)
+void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 {
 	int status;
 	pid_t pid;
@@ -74,15 +81,17 @@ void forkAndLaunch(char** args, char* inputFS, char* outputFS)
 	case -1:
 		//syserr("fork");
 	case 0:
-		if (!strcmp(inputFS, "")==0)
+		//if (!strcmp(inputFS, "")==0)
+		if (inputFP!=NULL)
 		{
-			//stdin = inputFP;
-			freopen(inputFS, "r", stdin);
+			stdin = inputFP;
+			//freopen(inputFS, "r", stdin);
 		}
-		if (!strcmp(outputFS, "") == 0)
+		//if (!strcmp(outputFS, "") == 0)
+		if(outputFP!=NULL)
 		{
-			//stdout = outputFP;
-			freopen(outputFS, "w", stdout);
+			stdout = outputFP;
+			//freopen(outputFS, "w", stdout);
 		}
 		execvp(args[0], args);
 		//syserr("exec");

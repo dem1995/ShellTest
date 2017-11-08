@@ -54,8 +54,8 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	FILE* inputFP;
-	FILE* outputFP;
+	FILE* inputFP = NULL;
+	FILE* outputFP = NULL;
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
@@ -79,11 +79,11 @@ int main(int argc, char ** argv) {
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString);
-				//setUpIO(inputString, outputString, &inputFP, &outputFP);
+				setUpIO(inputString, outputString, &inputFP, &outputFP);
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
-				if (customCommandCheck(args[0], args, inputString, outputString))
+				if (customCommandCheck(args[0], args, inputFP, outputFP))
 					continue;
 				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
@@ -94,19 +94,21 @@ int main(int argc, char ** argv) {
 			}
 		}		
 	}
-	//fclose(inputFP);
-	//fclose(outputFP);
+	if (inputFP != NULL)
+		fclose(inputFP);
+	if (outputFP != NULL)
+		fclose(outputFP);
 
 	return 0;
 }
 
-bool customCommandCheck(char* arg0, char** args, char* inputFS, char* outputFS)
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 {
 	/*CLEAR COMMAND*/
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		forkAndLaunch(args, inputFS, outputFS);
+		forkAndLaunch(args, inputFP, outputFP);
 	}
 
 	/*DIRECTORY COMMAND*/
@@ -134,12 +136,16 @@ bool customCommandCheck(char* arg0, char** args, char* inputFS, char* outputFS)
 	/*ENVIRON COMMAND*/
 	else if (!strcmp(args[0], "environ"))
 	{
-		FILE* output = fopen(outputFS, "w");
+		//FILE* output = fopen(outputFS, "w");
+
 
 		char** env = environ;
-		while (*env)
-			fprintf(output, "%s\n", *env++); // step through environment
-		close(output);
+		if (outputFP==NULL)
+			while (*env)
+				fprintf(stdout, "%s\n", *env++); // step through environment
+		else
+			while (*env)
+				fprintf(outputFP, "%s\n", *env++); // step through environment
 	}
 
 	/*CHANGE DIRECTORY COMMAND*/
