@@ -49,9 +49,10 @@ bool customCommandCheck(char* arg0, char** args);
 #define MAX_BUFFER 1024 // max line buffer
 #define MAX_ARGS 64 // max # args
 #define SEPARATORS " \t\n" // token sparators
-#define KBLU  "\x1B[34m"
-#define KRED  "\x1B[31m"
-#define RESET "\x1B[0m"
+#define KBLU  "\x1B[34m"	//Blue text
+#define KCYN   "\x1B[36m"	//Cyan text
+#define KRED  "\x1B[31m"	//Red text
+#define RESET "\x1B[0m"		//Reset text color
 
 
 extern char** environ;
@@ -66,7 +67,7 @@ int main(int argc, char ** argv) {
 
 		/* get command line from input */
 		//char
-		fprintf(stdout, KBLU"%s"RESET"%s\n", getenv("PWD"), prompt); //write prompt
+		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
 
 		if (fgets(buf, MAX_BUFFER, stdin)) { // read a line
 
