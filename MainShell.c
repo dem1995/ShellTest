@@ -61,6 +61,7 @@ int main(int argc, char ** argv) {
 	while (!feof(stdin)) {
 
 		/* get command line from input */
+		fputs(getenv("PWD"), stdout);
 		fputs(prompt, stdout); // write prompt
 		if (fgets(buf, MAX_BUFFER, stdin)) { // read a line
 
@@ -159,7 +160,7 @@ bool customCommandCheck(char* arg0, char** args)
 			if (chdir(args[1])==0) 
 			{
 				char* buf = malloc(sizeof(char)*MAX_BUFFER);
-				setenv("PWD", getcwd(NULL, MAX_BUFFER), 1);
+				setenv("PWD", getcwd(buf, MAX_BUFFER), 1);
 				free(buf);
 			}
 			else {
