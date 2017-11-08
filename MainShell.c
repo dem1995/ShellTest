@@ -123,7 +123,8 @@ void setUpIO(char* inputString, char* outputString)
 {
 	if (strcmp(inputString, "")!=0)	//if there's an input string
 	{ 
-		freopen(inputString, "r", stdin);
+		//freopen(inputString, "r", stdin);
+		stdin = fopen(inputString, "r");
 		//int fd = open(inputString, O_RDONLY);
 		//dup2(fd, STDIN_FILENO);
 		//close(fd);
@@ -131,7 +132,8 @@ void setUpIO(char* inputString, char* outputString)
 
 	if (strcmp(outputString, "")!=0) //if there's an output string
 	{
-		freopen(outputString, "w", stdout);
+		//freopen(outputString, "w", stdout);
+		stdout = fopen(outputString, "w");
 		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
 		//dup2(fd, STDOUT_FILENO);
 		//close(fd);
