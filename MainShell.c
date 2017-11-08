@@ -49,6 +49,9 @@ bool customCommandCheck(char* arg0, char** args);
 #define MAX_BUFFER 1024 // max line buffer
 #define MAX_ARGS 64 // max # args
 #define SEPARATORS " \t\n" // token sparators
+#define KBLU  "\x1B[34m"
+#define KRED  "\x1B[31m"
+
 
 extern char** environ;
 int main(int argc, char ** argv) {
@@ -61,6 +64,8 @@ int main(int argc, char ** argv) {
 	while (!feof(stdin)) {
 
 		/* get command line from input */
+		//char
+		fprintf(stdout, "%s%s", getenv("PWD"), "\n");
 		fputs(getenv("PWD"), stdout);
 		fputs(prompt, stdout); // write prompt
 		if (fgets(buf, MAX_BUFFER, stdin)) { // read a line
@@ -153,7 +158,7 @@ bool customCommandCheck(char* arg0, char** args)
 	{
 		if (args[1] == NULL) //if there's no second argument, just print the current directory
 		{ 
-			printf("Current directory (According to environ): %s\n", getenv("PWD"));
+			fprintf(stdout, "Current directory (According to environ): %s\n", getenv("PWD"));
 		}
 		else				//If there is a second argument
 		{
