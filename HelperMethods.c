@@ -65,7 +65,7 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 		*outputFPPointer = stdout;
 }
 
-void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
+void forkAndLaunch(char** args, char* inputFS, char* outputFS)
 {
 	int status;
 	pid_t pid;
@@ -74,10 +74,16 @@ void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 	case -1:
 		//syserr("fork");
 	case 0:
-		if (inputFP != NULL)
-			stdin = inputFP;
-		if (outputFP != NULL)
-			stdout = outputFP;
+		if (!strcmp(inputFS, "")==0)
+		{
+			//stdin = inputFP;
+			freopen(inputFS, "r", stdin);
+		}
+		if (!strcmp(outputFS, "") == 0)
+		{
+			//stdout = outputFP;
+			freopen(outputFS, "w", stdout);
+		}
 		execvp(args[0], args);
 		//syserr("exec");
 	default:
