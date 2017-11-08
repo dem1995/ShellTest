@@ -40,7 +40,6 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	int status;
 	
 	/* keep reading input until "quit" command or eof of redirected input */
 
@@ -61,7 +60,7 @@ int main(int argc, char ** argv) {
 				/* check for internal/external command */
 				if (!strcmp(args[0], "clr")) //"clear" command
 				{
-					system("clear");
+					bashLaunch("clear");
 					continue;
 				}
 				
@@ -75,12 +74,12 @@ int main(int argc, char ** argv) {
 						strcpy (dircmdmodifier, "ls -al ");
 						strcpy (dir, args[1]);
  						char* cmd = strcat (dircmdmodifier, dir);
-						system (cmd);
+						bashLaunch(cmd);
 					}
 					else
 					{
 						// if no directory is specified, use the current directory.
-						system("ls -al ./");
+						bashLaunch("ls -al ./");
 					}
 					free(dir);
 					free(dircmdmodifier);
@@ -108,22 +107,29 @@ int main(int argc, char ** argv) {
 				if (!strcmp(args[0], "quit")) // "quit" command
 					break; // break out of 'while' loop
 	
-				/* else pass command onto OS (or in this instance, print them out) */
-				//arg = args;
-				//while ( * arg) fprintf(stdout, "%s ", * arg++);
-				//fputs("\n", stdout);
-				//system(buf);
-				pid_t pid = fork();
-				if (pid==0)
-					execl("/bin/bash", "sh", "-c", buf, (char *)0);
-				else
-				{
-					do int w = waitpid(pid, &status, WUNTRACED);				
-					while (!WIFEXITED(status)&&!WIFSIGNALED(status));
-					continue;
-				}
+				/* else pass command on to the OS*/
+				bashLaunch(buf);
 			}
 		}
 	}
 	return 0;
+}
+
+void bashLaunch(char* command)
+{
+	int status;
+	pid_t pid = fork();
+	if (pid == 0)
+	{
+		execl("/bin/bash", "sh", "-c", command, (char *)0);
+	}
+	else
+	{
+		do
+		{
+			int w = waitpid(pid, &status, WUNTRACED);
+		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
+		continue;
+	}
+	
 }
