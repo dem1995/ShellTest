@@ -27,6 +27,8 @@ C
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -40,7 +42,7 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	
+
 	/* keep reading input until "quit" command or eof of redirected input */
 
 	while (!feof(stdin)) {
@@ -52,10 +54,10 @@ int main(int argc, char ** argv) {
 			/* tokenize the input into args array */
 			arg = args;
 			*arg++ = strtok(buf, SEPARATORS); // tokenize input
-			while (( * arg++ = strtok(NULL, SEPARATORS)));
+			while ((*arg++ = strtok(NULL, SEPARATORS)));
 			// last entry will be NULL
-			if (args[0]) 
-			{				
+			if (args[0])
+			{
 				// if there's anything there
 				/* check for internal/external command */
 				if (!strcmp(args[0], "clr")) //"clear" command
@@ -63,17 +65,17 @@ int main(int argc, char ** argv) {
 					bashLaunch("clear");
 					continue;
 				}
-				
-				if (!strcmp(args[0], "dir"))	//"directory" command
-				{					
-					char* dir = malloc (sizeof (char) * MAX_BUFFER);
-					char* dircmdmodifier = malloc (sizeof (char) * MAX_BUFFER); //modifier for how dir should be displayed
-					if (args[1]!=0)
+
+				else if (!strcmp(args[0], "dir"))	//"directory" command
+				{
+					char* dir = malloc(sizeof(char) * MAX_BUFFER);
+					char* dircmdmodifier = malloc(sizeof(char) * MAX_BUFFER); //modifier for how dir should be displayed
+					if (args[1] != 0)
 					{
 						// if the directory parameter is non-empty
-						strcpy (dircmdmodifier, "ls -al ");
-						strcpy (dir, args[1]);
- 						char* cmd = strcat (dircmdmodifier, dir);
+						strcpy(dircmdmodifier, "ls -al ");
+						strcpy(dir, args[1]);
+						char* cmd = strcat(dircmdmodifier, dir);
 						bashLaunch(cmd);
 					}
 					else
@@ -87,28 +89,29 @@ int main(int argc, char ** argv) {
 					continue;
 				}
 
-				if (!strcmp(args[0], "environ"))	//"environ" command
+				else if (!strcmp(args[0], "environ"))	//"environ" command
 				{
 					char** env = environ;
 					while (*env)
-						printf("%s\n",*env++); // step through environment
+						printf("%s\n", *env++); // step through environment
 					continue;
 				}
 
-				if (!strcmp(args[0], "cd"))	//"change directory" command
+				else if (!strcmp(args[0], "cd"))	//"change directory" command
 				{
-					if (args[1]==0)
+					if (args[1] == 0)
 						printf("%s\n", *environ);
-					else if (args[1]!=0)
-						chdir(*environ);		
+					else if (args[1] != 0)
+						chdir(*environ);
 				}
 
-				
-				if (!strcmp(args[0], "quit")) // "quit" command
+
+				else if (!strcmp(args[0], "quit")) // "quit" command
 					break; // break out of 'while' loop
-	
+
 				/* else pass command on to the OS*/
-				bashLaunch(buf);
+				else
+					bashLaunch(buf);
 			}
 		}
 	}
@@ -129,7 +132,5 @@ void bashLaunch(char* command)
 		{
 			int w = waitpid(pid, &status, WUNTRACED);
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
-		continue;
 	}
-	
 }
