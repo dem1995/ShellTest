@@ -65,6 +65,7 @@ int main(int argc, char ** argv) {
 
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
+			fprintf(stdout, "Buffer1: %s", buf);
 
 			/*TOKENIZING THE INPUT*/
 			arg = args;
@@ -91,7 +92,7 @@ int main(int argc, char ** argv) {
 				//else pass command on to BASH
 				else
 				{
-					fprintf(stdout,"Buffer: %s", buf);
+					fprintf(stdout,"Buffer2: %s", buf);
 					bashLaunch(buf);
 				}
 			}
