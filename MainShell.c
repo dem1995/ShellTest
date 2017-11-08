@@ -54,13 +54,14 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	FILE* inputFP;
-	FILE* outputFP;
+	FILE* inputFP = malloc(sizeof(FILE));
+	FILE* outputFP = malloc(sizeof(FILE));
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
 
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
+
 
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
@@ -95,6 +96,9 @@ int main(int argc, char ** argv) {
 	}
 	//fclose(inputFP);
 	//fclose(outputFP);
+	free(inputFP);
+	free(inputFP);
+
 	return 0;
 }
 
