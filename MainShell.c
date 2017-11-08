@@ -119,7 +119,8 @@ bool customCommandCheck(char* arg0, char** args)
 {
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
-		bashLaunch("clear");
+		args[0] = "clear";
+		execvp(args[0], args);
 	}
 	else if (!strcmp(args[0], "dir"))	//"directory" command
 	{
