@@ -150,10 +150,9 @@ bool customCommandCheck(char* arg0, char** args)
 	}
 	else if (!strcmp(args[0], "cd"))	//"change directory" command
 	{
-		printf("Current directory: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
 		if (args[1] == NULL) //if there's no second argument, just print the current directory
 		{ 
-			printf("Current directory (According to environ): %s", getenv("PWD"));
+			printf("Current directory (According to environ): %s\n", getenv("PWD"));
 		}
 		else				//If there is a second argument
 		{
