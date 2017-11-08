@@ -51,7 +51,7 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 
 
 //Clears *inputFPPointer and *outputFPPointer if they're not NULL
-void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
+void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer, bool shouldOpen)
 {
 	if (*inputFPPointer != NULL)
 	{
@@ -75,7 +75,11 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 	}
 	if (strcmp(outputString, "") != 0) //if there's an output string
 	{
-		*outputFPPointer = fopen(outputString, "w");
+		if (shouldOpen)
+			*outputFPPointer = fopen(outputString, "a");
+		else
+			*outputFPPointer = fopen(outputString, "w");
+
 		//freopen(outputString, "w", stdout);
 		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
 		//dup2(fd, STDOUT_FILENO);

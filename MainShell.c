@@ -79,7 +79,7 @@ int main(int argc, char ** argv) {
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
 				determineRedirection(args, inputString, outputString, &shouldAppend);
-				setUpIO(inputString, outputString, &inputFP, &outputFP);
+				setUpIO(inputString, outputString, &inputFP, &outputFP, shouldAppend);
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
