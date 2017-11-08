@@ -150,10 +150,19 @@ bool customCommandCheck(char* arg0, char** args)
 	}
 	else if (!strcmp(args[0], "cd"))	//"change directory" command
 	{
-		if (args[1] == 0)
-			printf("%s\n", *environ);
-		else if (args[1] != 0)
-			chdir(*environ);
+		printf("Current directory: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
+		if (args[1] == NULL) { // If <directory> argument NOT present -> report the current directory
+			printf("Directory unchanged: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
+		}
+		else {
+			if (!chdir(args[1])) {
+				setenv("PWD", getcwd(NULL, 0), 1);
+				printf("Successful directory change: getenv(\"PWD\") -> \"%s\", getcwd(NULL, 0) -> \"%s\"\n", getenv("PWD"), getcwd(NULL, 0));
+			}
+			else {
+				printf("Unsuccessful directory change\n");
+			}
+		}
 	}
 	else
 		return false;
