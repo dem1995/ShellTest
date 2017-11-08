@@ -176,10 +176,10 @@ void forkAndLaunch(char* args)
 	switch (pid = fork())
 	{
 		case -1:
-			syserr("fork");
+			//syserr("fork");
 		case 0:
 			execvp(args[0], args);
-			syserr("exec");
+			//syserr("exec");
 		default:
 			do 
 			{
