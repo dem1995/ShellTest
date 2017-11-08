@@ -43,7 +43,7 @@ C
 void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
 void forkAndLaunch(char* args);
-bool customCommandCheck(char* arg0, char* args);
+bool customCommandCheck(char* arg0, char** args);
 
 
 #define MAX_BUFFER 1024 // max line buffer
@@ -115,7 +115,7 @@ void setUpIO(char* inputString, char* outputString)
 	}
 }
 
-bool customCommmandCheck (char* s, char* args)
+bool customCommmandCheck (char* s, char** args)
 {
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
