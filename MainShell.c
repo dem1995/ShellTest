@@ -117,45 +117,46 @@ void setUpIO(char* inputString, char* outputString)
 
 bool customCommmandCheck(char* arg1, char** args)
 {
-	if (!strcmp(args[0], "clr")) //"clear" command
-	{
-		bashLaunch("clear");
-	}
-	else if (!strcmp(args[0], "dir"))	//"directory" command
-	{
-		char* dir = malloc(sizeof(char) * MAX_BUFFER);
-		char* dircmdmodifier = malloc(sizeof(char) * MAX_BUFFER); //modifier for how dir should be displayed
-		if (args[1] != 0)
-		{
-			// if the directory parameter is non-empty
-			strcpy(dircmdmodifier, "ls -al ");
-			strcpy(dir, args[1]);
-			char* cmd = strcat(dircmdmodifier, dir);
-			bashLaunch(cmd);
-		}
-		else
-		{
-			// if no directory is specified, use the current directory.
-			bashLaunch("ls -al ./");
-		}
-		free(dir);
-		free(dircmdmodifier);
-	}
-	else if (!strcmp(args[0], "environ"))	//"environ" command
-	{
-		char** env = environ;
-		while (*env)
-			printf("%s\n", *env++); // step through environment
-	}
-	else if (!strcmp(args[0], "cd"))	//"change directory" command
-	{
-		if (args[1] == 0)
-			printf("%s\n", *environ);
-		else if (args[1] != 0)
-			chdir(*environ);
-	}
-	else
-		return false;
+	//if (!strcmp(args[0], "clr")) //"clear" command
+	//{
+	//	bashLaunch("clear");
+	//}
+	//else if (!strcmp(args[0], "dir"))	//"directory" command
+	//{
+	//	char* dir = malloc(sizeof(char) * MAX_BUFFER);
+	//	char* dircmdmodifier = malloc(sizeof(char) * MAX_BUFFER); //modifier for how dir should be displayed
+	//	if (args[1] != 0)
+	//	{
+	//		// if the directory parameter is non-empty
+	//		strcpy(dircmdmodifier, "ls -al ");
+	//		strcpy(dir, args[1]);
+	//		char* cmd = strcat(dircmdmodifier, dir);
+	//		bashLaunch(cmd);
+	//	}
+	//	else
+	//	{
+	//		// if no directory is specified, use the current directory.
+	//		bashLaunch("ls -al ./");
+	//	}
+	//	free(dir);
+	//	free(dircmdmodifier);
+	//}
+	//else if (!strcmp(args[0], "environ"))	//"environ" command
+	//{
+	//	char** env = environ;
+	//	while (*env)
+	//		printf("%s\n", *env++); // step through environment
+	//}
+	//else if (!strcmp(args[0], "cd"))	//"change directory" command
+	//{
+	//	if (args[1] == 0)
+	//		printf("%s\n", *environ);
+	//	else if (args[1] != 0)
+	//		chdir(*environ);
+	//}
+	//else
+	//	return false;
+	//return true;
 	return true;
 }
 
