@@ -8,6 +8,8 @@
 #define pid_t int
 #endif
 
+void removeRedirectionElements(char** args);
+
 void determineRedirection(char** argStrings, char* inputString, char* outputString)
 {
 	bool nextStringIsInputToken = false;
@@ -37,7 +39,10 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 			nextStringIsOutputToken = true;
 		}
 	}
+
+	removeRedirectionElements(argStrings);
 }
+
 
 //Clears *inputFPPointer and *outputFPPointer if they're not NULL
 void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
@@ -102,3 +107,25 @@ void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 		} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 	}
 }
+
+void removeRedirectionElements(char** args)
+{
+	for (int i=0; args[i] != NULL; i++)
+	{
+		if ((strcmp(args[i], "<") == 0) || (strcmp(args[i], ">") == 0) || (strcmp(args[i], ">>") == 0))
+		{
+			removeString(args, i);
+			if (args[i]!=NULL)
+				removeString(args, i);
+		}
+	}
+}
+
+void removeString(char** stringArray, int location)
+{
+	for ( int i=location; stringArray[i] != NULL; i++)
+	{
+		stringArray[i] = stringArray[i + 1];
+	}
+}
+
