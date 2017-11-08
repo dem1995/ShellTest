@@ -37,10 +37,6 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 	}
 }
 
-void forkAndLaunch(char** args)
-{
-	forkAndLaunch(args, NULL, NULL);
-}
 
 void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 {
