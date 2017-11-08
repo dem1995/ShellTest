@@ -141,7 +141,9 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 		else
 		{
 			// if no directory is specified, use the current directory.
-			bashLaunch("ls -al ./");
+			char* argv[] = { "ls", "-al", 0 };
+			forkAndLaunch(argv, inputFP, outputFP);
+			//bashLaunch("ls -al ./");
 		}
 		free(dir);
 		free(dircmdmodifier);
