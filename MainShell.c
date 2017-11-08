@@ -115,7 +115,7 @@ void setUpIO(char* inputString, char* outputString)
 	}
 }
 
-bool customCommmandCheck (char* arg1, char** args)
+bool customCommmandCheck(char* arg1, char** args)
 {
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
