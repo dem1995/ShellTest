@@ -45,10 +45,8 @@ C
 #define KRED  "\x1B[31m"	//Red text
 #define RESET "\x1B[0m"		//Reset text color
 
-void setUpIO(char* inputString, char* outputString);
 void bashLaunch(char* command);
-bool customCommandCheck(char* arg0, char** args);
-
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP);
 
 extern char** environ;
 int main(int argc, char ** argv) {
@@ -164,28 +162,7 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP)
 }
 
 
-void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
-{
-	if (strcmp(inputString, "") != 0)	//if there's an input string
-	{
-		
-		freopen(inputString, "r", *inputFPPointer);
-		//freopen(inputString, "r", stdin);
-		//stdin = fopen(inputString, "r");
-		//int fd = open(inputString, O_RDONLY);
-		//dup2(fd, STDIN_FILENO);
-		//close(fd);
-	}
 
-	if (strcmp(outputString, "") != 0) //if there's an output string
-	{
-		freopen(inputString, "w", *outputFPPointer);
-		//freopen(outputString, "w", stdout);
-		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
-		//dup2(fd, STDOUT_FILENO);
-		//close(fd);
-	}
-}
 
 void bashLaunch(char* command)
 {

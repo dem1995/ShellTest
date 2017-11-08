@@ -39,6 +39,28 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 	}
 }
 
+void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE** outputFPPointer)
+{
+	if (strcmp(inputString, "") != 0)	//if there's an input string
+	{
+
+		freopen(inputString, "r", *inputFPPointer);
+		//freopen(inputString, "r", stdin);
+		//stdin = fopen(inputString, "r");
+		//int fd = open(inputString, O_RDONLY);
+		//dup2(fd, STDIN_FILENO);
+		//close(fd);
+	}
+
+	if (strcmp(outputString, "") != 0) //if there's an output string
+	{
+		freopen(inputString, "w", *outputFPPointer);
+		//freopen(outputString, "w", stdout);
+		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
+		//dup2(fd, STDOUT_FILENO);
+		//close(fd);
+	}
+}
 
 void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
 {
