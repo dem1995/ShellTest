@@ -1,30 +1,4 @@
-﻿/*
- strtokeg - skeleton shell using strtok to parse command line
-
- usage:
-
- ./a.out
-
- reads in a line of keyboard input at a time, parsing it into
- tokens that are separated by white spaces (set by #define
- SEPARATORS).
- can use redirected input
-
- if the first token is a recognized internal command, then that
- command is executed. otherwise the tokens are printed on the
- display.
-strtokeg.c
-C
-C
-
- internal commands:
-
- clear - clears the screen
-
- quit - exits from the program
-
- */
-#include <string.h>
+﻿#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -36,33 +10,32 @@ C
 #include <fcntl.h>
 
 
-
 #define MAX_BUFFER 1024 // max line buffer
 #define MAX_ARGS 64 // max # args
 #define SEPARATORS " \t\n" // token sparators
-#define KBLU  "\x1B[34m"	//Blue text
+
 #define KCYN  "\x1B[36m"	//Cyan text
-#define KRED  "\x1B[31m"	//Red text
 #define RESET "\x1B[0m"		//Reset text color
 
 bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS, bool ShouldAppend);
 
 extern char** environ;
 int main(int argc, char ** argv) {
-	char buf[MAX_BUFFER]; // line buffer
-	char* args[MAX_ARGS]; // pointers to arg strings
-	char** arg; // working pointer thru args
-	char* prompt = "==>"; // shell prompt
-	FILE* inputFP = NULL;
-	FILE* outputFP = NULL;
-	bool shouldAppend = false;
+	char buf[MAX_BUFFER];		// line buffer
+	char* args[MAX_ARGS];		// pointers to arg strings
+	char** arg;					// working pointer thru args
+	char* prompt = "==>";		// shell prompt
+	FILE* inputFP = NULL;		// Pointer to the user-defined input file; is NULL if none exists
+	FILE* outputFP = NULL;		// Pointer to the user-defined output file; is NULL if none exists
+	bool shouldAppend = false;	// Whether the output file should be appended to (if false, it is truncated)
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
 
+		//Prints the current directory to stdout
 		fprintf(stdout, KCYN"%s"RESET"%s ", getenv("PWD"), prompt); //write prompt
 
-
+		//Begin the process of executing a command if the user has entered things
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
 
@@ -71,13 +44,14 @@ int main(int argc, char ** argv) {
 			*arg++ = strtok(buf, SEPARATORS);
 			while ((*arg++ = strtok(NULL, SEPARATORS))); // last entry will be NULL	
 
-
-			if (args[0]) // if there's anything there
+			//if the user's input actually has things
+			if (args[0])
 			{
 
 				/*HANDLING I/O*/
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
+				//sets up the input file name and output file name, as well as pointers to the files those represent
 				determineRedirection(args, inputString, outputString, &shouldAppend);
 				setUpIO(inputString, outputString, &inputFP, &outputFP, shouldAppend);
 
@@ -88,7 +62,7 @@ int main(int argc, char ** argv) {
 				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
 					break; // break out of 'while' look
-				//else pass command on to BASH
+				//else execute command on computer
 				else
 				{
 					forkAndLaunch(args, inputString, outputString, shouldAppend);
@@ -96,14 +70,18 @@ int main(int argc, char ** argv) {
 			}
 		}		
 	}
+	
+	//close files, if needed
 	if (inputFP != NULL)
 		fclose(inputFP);
 	if (outputFP != NULL)
 		fclose(outputFP);
-
 	return 0;
 }
 
+/*
+ * Checks for custom commands (commands specific to this shell) and carries them out if they are found
+ */
 bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS, bool shouldAppend)
 {
 	/*CLEAR COMMAND*/
@@ -167,6 +145,7 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, 
 		{
 			if (chdir(args[1])==0) 
 			{
+				//Setting the environment
 				char* buf = malloc(sizeof(char)*MAX_BUFFER);
 				setenv("PWD", getcwd(buf, MAX_BUFFER), 1);
 				free(buf);
