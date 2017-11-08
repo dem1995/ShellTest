@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 #ifndef pid_t
 #define pid_t int
