@@ -93,8 +93,8 @@ int main(int argc, char ** argv) {
 			}
 		}		
 	}
-	fclose(inputFP);
-	fclose(outputFP);
+	//fclose(inputFP);
+	//fclose(outputFP);
 	return 0;
 }
 
