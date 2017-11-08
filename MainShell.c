@@ -120,7 +120,7 @@ bool customCommandCheck(char* arg0, char** args)
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		execvp(args[0], args);
+		forkAndLaunch(args);
 	}
 	else if (!strcmp(args[0], "dir"))	//"directory" command
 	{
