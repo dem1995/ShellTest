@@ -90,7 +90,7 @@ int main(int argc, char ** argv) {
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
-				if (customCommandCheck(args[0], args, inputFP, outputFP))
+				if (customCommandCheck(args[0], args, inputFP, outputFP, inputString, outputString))
 					continue;
 				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
@@ -118,7 +118,7 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, 
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		forkAndLaunch(args, inputFP, outputFP);
+		forkAndLaunch(args, inputFS, outputFS);
 	}
 
 	/*DIRECTORY COMMAND*/
