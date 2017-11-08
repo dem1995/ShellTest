@@ -54,8 +54,8 @@ int main(int argc, char ** argv) {
 	char* args[MAX_ARGS]; // pointers to arg strings
 	char** arg; // working pointer thru args
 	char* prompt = "==>"; // shell prompt
-	FILE* inputFP = malloc(sizeof(FILE));
-	FILE* outputFP = malloc(sizeof(FILE));
+	FILE* inputFP;
+	FILE* outputFP;
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
@@ -96,8 +96,6 @@ int main(int argc, char ** argv) {
 	}
 	//fclose(inputFP);
 	//fclose(outputFP);
-	free(inputFP);
-	free(inputFP);
 
 	return 0;
 }
