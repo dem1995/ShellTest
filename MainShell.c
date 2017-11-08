@@ -56,6 +56,7 @@ int main(int argc, char ** argv) {
 	char* prompt = "==>"; // shell prompt
 	FILE* inputFP = NULL;
 	FILE* outputFP = NULL;
+	bool shouldAppend = false;
 
 	/* keep reading input until "quit" command or eof of redirected input */
 	while (!feof(stdin)) {
@@ -65,14 +66,12 @@ int main(int argc, char ** argv) {
 
 		if (fgets(buf, MAX_BUFFER, stdin)) // read a line
 		{ 
-			fprintf(stdout, "Buffer1: %s\n", buf);
 
 			/*TOKENIZING THE INPUT*/
 			arg = args;
 			*arg++ = strtok(buf, SEPARATORS);
 			while ((*arg++ = strtok(NULL, SEPARATORS))); // last entry will be NULL	
 
-			fprintf(stdout, "Buffer2: %s\n", buf);
 
 			if (args[0]) // if there's anything there
 			{
@@ -80,17 +79,12 @@ int main(int argc, char ** argv) {
 				/*HANDLING I/O*/
 				char inputString[MAX_BUFFER] = "";
 				char outputString[MAX_BUFFER] = "";
-				determineRedirection(args, inputString, outputString);
+				determineRedirection(args, inputString, outputString, &shouldAppend);
 				setUpIO(inputString, outputString, &inputFP, &outputFP);
-				fprintf(stdout, "Buffer3: %s\n", buf);
-				for (int i = 0; args[i] != NULL; i++)
-				{
-					fprintf(stdout, "%s ", args[i]);
-				}
 
 				/*CHECKING FOR COMMANDS*/
 				// check for internal commands
-				if (customCommandCheck(args[0], args, inputFP, outputFP, inputString, outputString))
+				if (customCommandCheck(args[0], args, inputFP, outputFP, inputString, outputString, shouldAppend))
 					continue;
 				// check for quitting
 				else if (!strcmp(args[0], "quit")) // "quit" command
@@ -98,8 +92,7 @@ int main(int argc, char ** argv) {
 				//else pass command on to BASH
 				else
 				{
-					fprintf(stdout,"Buffer4: %s\n", buf);
-					forkAndLaunch(args, inputString, outputString);
+					forkAndLaunch(args, inputString, outputString, shouldAppend);
 				}
 			}
 		}		
@@ -112,13 +105,13 @@ int main(int argc, char ** argv) {
 	return 0;
 }
 
-bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS)
+bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, char* inputFS, char* outputFS, bool shouldAppend)
 {
 	/*CLEAR COMMAND*/
 	if (!strcmp(args[0], "clr")) //"clear" command
 	{
 		args[0] = "clear";
-		forkAndLaunch(args, inputFS, outputFS);
+		forkAndLaunch(args, inputFS, outputFS, shouldAppend);
 	}
 
 	/*DIRECTORY COMMAND*/
@@ -135,14 +128,14 @@ bool customCommandCheck(char* arg0, char** args, FILE* inputFP, FILE* outputFP, 
 
 			char* argv[] = { "ls", "-al", dir, 0 };
 
-			forkAndLaunch(argv, inputFS, outputFS);
+			forkAndLaunch(argv, inputFS, outputFS, shouldAppend);
 			//bashLaunch(cmd);
 		}
 		else
 		{
 			// if no directory is specified, use the current directory.
 			char* argv[] = { "ls", "-al", 0 };
-			forkAndLaunch(argv, inputFS, outputFS);
+			forkAndLaunch(argv, inputFS, outputFS, shouldAppend);
 			//bashLaunch("ls -al ./");
 		}
 		free(dir);

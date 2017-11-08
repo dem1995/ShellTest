@@ -11,7 +11,7 @@
 void removeRedirectionElements(char** args);
 void removeString(char** stringArray, int location);
 
-void determineRedirection(char** argStrings, char* inputString, char* outputString)
+void determineRedirection(char** argStrings, char* inputString, char* outputString, bool* shouldAppend)
 {
 	bool nextStringIsInputToken = false;
 	bool nextStringIsOutputToken = false;
@@ -35,9 +35,14 @@ void determineRedirection(char** argStrings, char* inputString, char* outputStri
 		{
 			nextStringIsInputToken = true;
 		}
-		else if (strcmp(argStrings[i], ">") == 0)
+		else if ((strcmp(argStrings[i], ">") == 0))
 		{
 			nextStringIsOutputToken = true;
+		}
+		else if ((strcmp(argStrings[i], ">>") == 0))
+		{
+			nextStringIsOutputToken = true;
+			*shouldAppend = true;
 		}
 	}
 
@@ -78,7 +83,7 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 	}
 }
 
-void forkAndLaunch(char** args, char* inputFS, char* outputFS)
+void forkAndLaunch(char** args, char* inputFS, char* outputFS, bool shouldAppend)
 {
 	int status;
 	pid_t pid;
@@ -101,7 +106,10 @@ void forkAndLaunch(char** args, char* inputFS, char* outputFS)
 			//dup2(fileno(inputFP), STDOUT_FILENO);
 			//fclose(outputFP);
 			//stdout = outputFP;
-			freopen(outputFS, "w", stdout);
+			if (shouldAppend)
+				freopen(outputFS, "a+", stdout);
+			else
+				freopen(outputFS, "w", stdout);
 		}
 		execvp(args[0], args);
 		//syserr("exec");
