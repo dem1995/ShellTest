@@ -43,7 +43,7 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 {
 	if (strcmp(inputString, "") != 0)	//if there's an input string
 	{
-		freopen(inputString, "r", *inputFPPointer);
+		*inputFPPointer = fopen(inputString, "r");
 		//freopen(inputString, "r", stdin);
 		//stdin = fopen(inputString, "r");
 		//int fd = open(inputString, O_RDONLY);
@@ -55,7 +55,7 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 
 	if (strcmp(outputString, "") != 0) //if there's an output string
 	{
-		freopen(outputString, "w", *outputFPPointer);
+		*outputFPPointer = fopen(outputString, "w");
 		//freopen(outputString, "w", stdout);
 		//int fd = open(inputString, O_WRONLY | O_CREAT | O_TRUNC);
 		//dup2(fd, STDOUT_FILENO);
