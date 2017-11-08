@@ -43,7 +43,6 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 {
 	if (strcmp(inputString, "") != 0)	//if there's an input string
 	{
-
 		freopen(inputString, "r", *inputFPPointer);
 		//freopen(inputString, "r", stdin);
 		//stdin = fopen(inputString, "r");
@@ -51,6 +50,8 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 		//dup2(fd, STDIN_FILENO);
 		//close(fd);
 	}
+	else
+		*inputFPPointer = stdin;
 
 	if (strcmp(outputString, "") != 0) //if there's an output string
 	{
@@ -60,6 +61,8 @@ void setUpIO(char* inputString, char* outputString, FILE** inputFPPointer, FILE*
 		//dup2(fd, STDOUT_FILENO);
 		//close(fd);
 	}
+	else
+		*outputFPPointer = stdout;
 }
 
 void forkAndLaunch(char** args, FILE* inputFP, FILE* outputFP)
